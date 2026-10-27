@@ -67,7 +67,7 @@ Ensure Ollama is running before using Ghostlight.
 On Windows, open Command Prompt and run:
 
 ```bat
-cd /d "C:\Users\Spandana\OneDrive\Desktop\Ghostlight"
+cd /d "C:\Desktop\Ghostlight"
 ```
 
 If your project is saved elsewhere, replace the path with your actual project location.
