@@ -1,0 +1,727 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ghostlight — Memories That Stay</title>
+
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      color: #f6eee5;
+      background: #100e18;
+      min-height: 100vh;
+    }
+
+    header {
+      padding: 24px 7%;
+      border-bottom: 1px solid #393044;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .brand {
+      font-size: 25px;
+      font-weight: bold;
+      color: #f6c879;
+    }
+
+    .tag {
+      color: #bdb1c9;
+      font: 13px Arial, sans-serif;
+    }
+
+    main {
+      max-width: 1000px;
+      margin: 50px auto;
+      padding: 0 22px;
+    }
+
+    .hero {
+      text-align: center;
+      margin-bottom: 35px;
+    }
+
+    .moon { font-size: 42px; }
+
+    h1 {
+      font-size: clamp(35px, 6vw, 55px);
+      margin: 14px 0;
+    }
+
+    h1 span { color: #f6c879; }
+
+    .intro {
+      color: #c7bdce;
+      line-height: 1.7;
+      font: 16px/1.7 Arial, sans-serif;
+    }
+
+    .panel {
+      background: #1b1725;
+      border: 1px solid #41334d;
+      border-radius: 18px;
+      padding: 28px;
+      box-shadow: 0 20px 60px #0004;
+    }
+
+    label {
+      display: block;
+      margin: 20px 0 10px;
+      font-size: 17px;
+    }
+
+    textarea, input, select {
+      width: 100%;
+      background: #100e18;
+      border: 1px solid #55465f;
+      border-radius: 10px;
+      padding: 14px;
+      color: #f6eee5;
+      font: 15px/1.5 Arial, sans-serif;
+    }
+
+    textarea {
+      min-height: 145px;
+      resize: vertical;
+    }
+
+    button {
+      border: 0;
+      border-radius: 10px;
+      padding: 13px 18px;
+      background: #f6c879;
+      color: #211526;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 14px;
+      font-size: 14px;
+      transition: transform 0.2s, opacity 0.2s;
+    }
+
+    button:hover { transform: translateY(-1px); }
+    button:disabled { opacity: .6; cursor: wait; }
+
+    button.secondary {
+      background: #393044;
+      color: #fff;
+    }
+
+    .status {
+      font: 14px/1.6 Arial, sans-serif;
+      color: #d5c8dd;
+      margin-top: 16px;
+      overflow-wrap: anywhere;
+    }
+
+    .result { margin-top: 28px; }
+
+    .story {
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+      line-height: 1.8;
+      font-size: 17px;
+      background: #100e18;
+      border-radius: 12px;
+      padding: 22px;
+      margin-top: 15px;
+    }
+
+    .hidden { display: none !important; }
+
+    /* Saved memories library */
+    .saved-section {
+      margin-top: 42px;
+      padding: 26px;
+      border: 1px solid #41334d;
+      border-radius: 18px;
+      background: #1b1725;
+      box-shadow: 0 20px 60px #0003;
+    }
+
+    .saved-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .saved-header h2 {
+      color: #f6c879;
+      margin: 0 0 8px;
+      font-size: 27px;
+    }
+
+    .saved-header p {
+      color: #bdb1c9;
+      margin: 0;
+      font: 14px/1.6 Arial, sans-serif;
+    }
+
+    .saved-header button { margin-top: 0; }
+
+    .saved-count {
+      color: #d5c8dd;
+      font: 14px Arial, sans-serif;
+      margin: 24px 0 16px;
+    }
+
+    .saved-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+    }
+
+    .saved-card {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      padding: 18px;
+      background: #100e18;
+      border: 1px solid #493952;
+      border-radius: 14px;
+    }
+
+    .saved-card h3 {
+      margin: 0 0 10px;
+      font-size: 19px;
+      line-height: 1.4;
+      overflow-wrap: anywhere;
+      color: #f6c879;
+    }
+
+    .saved-style {
+      color: #bdb1c9;
+      font: 12px Arial, sans-serif;
+      margin: 0 0 12px;
+    }
+
+    .saved-preview {
+      color: #ded3e4;
+      font: 14px/1.7 Arial, sans-serif;
+      overflow-wrap: anywhere;
+      flex-grow: 1;
+      margin: 0;
+    }
+
+    .saved-card button {
+      align-self: flex-start;
+      margin-top: 18px;
+    }
+
+    .empty-state {
+      grid-column: 1 / -1;
+      padding: 26px 16px;
+      text-align: center;
+      border: 1px dashed #55465f;
+      border-radius: 12px;
+      color: #bdb1c9;
+      font: 14px/1.8 Arial, sans-serif;
+    }
+
+    /* Saved memory popup */
+    .memory-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      padding: 20px;
+      overflow-y: auto;
+      background: rgba(0, 0, 0, 0.82);
+    }
+
+    .memory-modal-content {
+      max-width: 720px;
+      margin: 35px auto;
+      padding: 28px;
+      border: 1px solid #55465f;
+      border-radius: 18px;
+      background: #1b1725;
+      box-shadow: 0 20px 70px #0009;
+    }
+
+    .modal-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 15px;
+    }
+
+    .modal-top h2 {
+      color: #f6c879;
+      margin: 0;
+      overflow-wrap: anywhere;
+    }
+
+    .close-modal {
+      margin: 0;
+      padding: 8px 12px;
+      flex-shrink: 0;
+    }
+
+    .modal-style {
+      color: #bdb1c9;
+      font: 13px Arial, sans-serif;
+      margin: 12px 0 24px;
+    }
+
+    .memory-modal-content h3 {
+      color: #f6c879;
+      margin-top: 25px;
+    }
+
+    .modal-text {
+      color: #eee3f2;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+      line-height: 1.8;
+      font: 15px/1.8 Arial, sans-serif;
+    }
+
+    .modal-story {
+      background: #100e18;
+      border-radius: 12px;
+      padding: 20px;
+    }
+
+    footer {
+      text-align: center;
+      padding: 30px;
+      color: #8e8299;
+      font: 12px Arial, sans-serif;
+    }
+
+    @media (max-width: 600px) {
+      header { padding: 20px; }
+      .tag { font-size: 10px; text-align: right; }
+      .brand { font-size: 21px; }
+      .panel, .saved-section { padding: 20px; }
+      main { margin-top: 30px; }
+      .saved-header h2 { font-size: 23px; }
+      .memory-modal { padding: 10px; }
+      .memory-modal-content { padding: 20px; margin: 15px auto; }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="brand">☾ Ghostlight</div>
+    <div class="tag">YOUR MEMORIES, YOUR SPACE</div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="moon">🕯️</div>
+      <h1>Some memories deserve <span>to stay.</span></h1>
+      <p class="intro">
+        Turn a moment, a story, or a memory into something you can keep.
+        Your writing assistant runs on your own computer.
+      </p>
+    </section>
+
+    <section class="panel">
+      <label for="memory">What memory would you like to preserve?</label>
+      <textarea
+        id="memory"
+        maxlength="5000"
+        placeholder="Write about a special moment, someone who inspired you, a childhood memory, or a story you never want to forget..."
+      ></textarea>
+
+      <label for="style">Choose a writing style</label>
+      <select id="style">
+        <option>Heartfelt letter</option>
+        <option>Short story</option>
+        <option>Remembrance note</option>
+        <option>Spooky tale</option>
+      </select>
+
+      <button id="createBtn" onclick="createStory()">
+        ✦ Bring This Memory to Life
+      </button>
+
+      <div id="status" class="status" role="status" aria-live="polite">
+        Checking local AI connection…
+      </div>
+
+      <section id="result" class="result hidden">
+        <label for="storyTitle">Give your memory a title</label>
+        <input
+          id="storyTitle"
+          maxlength="150"
+          placeholder="A title for this memory"
+        >
+
+        <label>Your creation</label>
+        <div id="story" class="story"></div>
+
+        <button id="saveBtn" onclick="saveMemory()">
+          ♡ Save This Memory
+        </button>
+
+        <button class="secondary" onclick="copyStory()">
+          Copy text
+        </button>
+
+        <div id="saveStatus" class="status" role="status" aria-live="polite"></div>
+      </section>
+    </section>
+
+    <!-- Saved memories library -->
+    <section class="saved-section" id="savedMemories">
+      <div class="saved-header">
+        <div>
+          <h2>📚 Your Saved Memories</h2>
+          <p>Little moments, kept close.</p>
+        </div>
+
+        <button
+          type="button"
+          class="secondary"
+          id="refreshBtn"
+          onclick="loadSavedMemories()"
+        >
+          ↻ Refresh
+        </button>
+      </div>
+
+      <p id="savedCount" class="saved-count" role="status" aria-live="polite">
+        Loading your memories…
+      </p>
+
+      <div id="savedList" class="saved-list">
+        <div class="empty-state">Loading saved memories…</div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Popup for reading a saved memory -->
+  <div
+    id="memoryModal"
+    class="memory-modal hidden"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="modalTitle"
+  >
+    <div class="memory-modal-content">
+      <div class="modal-top">
+        <h2 id="modalTitle">Saved Memory</h2>
+        <button
+          type="button"
+          class="secondary close-modal"
+          onclick="closeSavedMemory()"
+          aria-label="Close saved memory"
+        >
+          ✕
+        </button>
+      </div>
+
+      <p id="modalStyle" class="modal-style"></p>
+
+      <h3>Original Memory</h3>
+      <div id="modalOriginal" class="modal-text"></div>
+
+      <h3>Created by Ghostlight</h3>
+      <div id="modalStory" class="modal-text modal-story"></div>
+
+      <button class="secondary" onclick="copySavedStory()">
+        Copy saved story
+      </button>
+    </div>
+  </div>
+
+  <footer>
+    Made with local AI · Ollama · Your memories stay on this computer
+  </footer>
+
+  <script>
+    let currentStory = "";
+    let currentMemory = "";
+    let currentStyle = "";
+    let savedStoryToCopy = "";
+
+    async function checkHealth() {
+      const status = document.getElementById("status");
+
+      try {
+        const response = await fetch("/api/health");
+        const data = await response.json();
+
+        status.textContent = data.available
+          ? "● Local AI connected: " + data.model
+          : "Local AI unavailable. Please start Ollama and check your model.";
+      } catch {
+        status.textContent =
+          "Could not connect to Ghostlight. Start the Python server.";
+      }
+    }
+
+    async function createStory() {
+      const memory = document.getElementById("memory").value.trim();
+      const style = document.getElementById("style").value;
+      const status = document.getElementById("status");
+      const button = document.getElementById("createBtn");
+      const result = document.getElementById("result");
+
+      if (memory.length < 10) {
+        status.textContent =
+          "Please write a little more about your memory first.";
+        return;
+      }
+
+      button.disabled = true;
+      status.textContent =
+        "Your local AI is writing… This may take a little while.";
+      result.classList.add("hidden");
+
+      try {
+        const response = await fetch("/api/create", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ memory, style })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || "Could not create the story.");
+        }
+
+        currentMemory = memory;
+        currentStyle = style;
+        currentStory = data.story || "";
+
+        document.getElementById("story").textContent = currentStory;
+
+        const firstLine = currentStory.split("\n")[0]
+          .replace(/^#+\s*/, "")
+          .replace(/^\*\*(.*?)\*\*$/, "$1")
+          .trim();
+
+        document.getElementById("storyTitle").value =
+          firstLine.slice(0, 150) || "My Memory";
+
+        document.getElementById("saveStatus").textContent = "";
+        result.classList.remove("hidden");
+
+        status.textContent =
+          "Created on your computer. Read it and make it your own.";
+      } catch (error) {
+        status.textContent = error.message;
+      } finally {
+        button.disabled = false;
+      }
+    }
+
+    async function saveMemory() {
+      const title = document.getElementById("storyTitle").value.trim();
+      const saveStatus = document.getElementById("saveStatus");
+      const button = document.getElementById("saveBtn");
+
+      if (!title) {
+        saveStatus.textContent = "Please enter a title.";
+        return;
+      }
+
+      if (!currentMemory || !currentStory) {
+        saveStatus.textContent =
+          "Create a memory first before saving it.";
+        return;
+      }
+
+      button.disabled = true;
+      saveStatus.textContent = "Saving your memory…";
+
+      try {
+        const response = await fetch("/api/save", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            title,
+            memory: currentMemory,
+            story: currentStory,
+            style: currentStyle
+          })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || "Could not save the memory.");
+        }
+
+        saveStatus.textContent = data.message;
+
+        // Refresh the library immediately after a successful save.
+        await loadSavedMemories();
+
+      } catch (error) {
+        saveStatus.textContent = error.message;
+      } finally {
+        button.disabled = false;
+      }
+    }
+
+    async function copyStory() {
+      const saveStatus = document.getElementById("saveStatus");
+
+      try {
+        await navigator.clipboard.writeText(currentStory);
+        saveStatus.textContent = "Copied to clipboard.";
+      } catch {
+        saveStatus.textContent =
+          "Clipboard access failed. Select and copy the text manually.";
+      }
+    }
+
+    async function loadSavedMemories() {
+      const list = document.getElementById("savedList");
+      const count = document.getElementById("savedCount");
+      const refreshBtn = document.getElementById("refreshBtn");
+
+      refreshBtn.disabled = true;
+      count.textContent = "Loading your memories…";
+
+      list.replaceChildren();
+
+      try {
+        const response = await fetch("/api/memories", {
+          cache: "no-store"
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(
+            data.error || "Could not load saved memories."
+          );
+        }
+
+        const memories = data.memories || [];
+
+        count.textContent =
+          `${memories.length} saved ${
+            memories.length === 1 ? "memory" : "memories"
+          }`;
+
+        if (memories.length === 0) {
+          const empty = document.createElement("div");
+          empty.className = "empty-state";
+          empty.textContent =
+            "No memories saved yet. Create your first memory above, then save it here. 🕯️";
+          list.appendChild(empty);
+          return;
+        }
+
+        memories.forEach((memory) => {
+          const card = document.createElement("article");
+          card.className = "saved-card";
+
+          const title = document.createElement("h3");
+          title.textContent = memory.title || "Untitled Memory";
+
+          const style = document.createElement("p");
+          style.className = "saved-style";
+          style.textContent = "✦ " + (memory.style || "Memory");
+
+          const preview = document.createElement("p");
+          preview.className = "saved-preview";
+
+          const original = memory.memory || "";
+          preview.textContent = original.length > 130
+            ? original.slice(0, 130) + "…"
+            : original;
+
+          const openBtn = document.createElement("button");
+          openBtn.type = "button";
+          openBtn.textContent = "Read Memory →";
+          openBtn.addEventListener("click", () => {
+            openSavedMemory(memory);
+          });
+
+          card.append(title, style, preview, openBtn);
+          list.appendChild(card);
+        });
+
+      } catch (error) {
+        count.textContent = "Unable to load saved memories.";
+
+        const message = document.createElement("div");
+        message.className = "empty-state";
+        message.textContent =
+          error.message + " Check that the Python server is running.";
+        list.appendChild(message);
+
+        console.error("Saved memories error:", error);
+
+      } finally {
+        refreshBtn.disabled = false;
+      }
+    }
+
+    function openSavedMemory(memory) {
+      document.getElementById("modalTitle").textContent =
+        memory.title || "Untitled Memory";
+
+      document.getElementById("modalStyle").textContent =
+        "Writing style: " + (memory.style || "Memory");
+
+      document.getElementById("modalOriginal").textContent =
+        memory.memory || "No original memory was recorded.";
+
+      document.getElementById("modalStory").textContent =
+        memory.story || "No generated story was recorded.";
+
+      savedStoryToCopy = memory.story || "";
+
+      document.getElementById("memoryModal").classList.remove("hidden");
+      document.body.style.overflow = "hidden";
+
+      document.querySelector(".close-modal").focus();
+    }
+
+    function closeSavedMemory() {
+      document.getElementById("memoryModal").classList.add("hidden");
+      document.body.style.overflow = "";
+    }
+
+    async function copySavedStory() {
+      try {
+        await navigator.clipboard.writeText(savedStoryToCopy);
+        alert("Saved story copied to clipboard!");
+      } catch {
+        alert("Clipboard access failed. Please select and copy the story manually.");
+      }
+    }
+
+    // Close the popup by clicking outside it or pressing Escape.
+    document.getElementById("memoryModal").addEventListener(
+      "click",
+      function(event) {
+        if (event.target === this) {
+          closeSavedMemory();
+        }
+      }
+    );
+
+    document.addEventListener("keydown", function(event) {
+      if (
+        event.key === "Escape" &&
+        !document.getElementById("memoryModal").classList.contains("hidden")
+      ) {
+        closeSavedMemory();
+      }
+    });
+
+    // Check Ollama and load the saved-memory library on page startup.
+    checkHealth();
+    loadSavedMemories();
+  </script>
+</body>
+</html>
